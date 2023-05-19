@@ -4,9 +4,8 @@
 
 void InitPins()
 {
-    pinMode(FAN_PIN, OUTPUT);
-    pinMode(HEATER_0_PIN, OUTPUT);
-    pinMode(LED_PIN, OUTPUT);
+    // pinMode(FAN_PIN, OUTPUT);
+    // pinMode(HEATER_0_PIN, OUTPUT);
 
     pinMode(X_STEP_PIN, OUTPUT);
     pinMode(X_DIR_PIN, OUTPUT);
@@ -21,4 +20,5 @@ void InitPins()
     pinMode(E_DIR_PIN, OUTPUT);
 
     pinMode(E_ENABLE_PIN, OUTPUT);
+    pinMode(ENABLE_PIN, OUTPUT);
 }
