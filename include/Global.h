@@ -3,6 +3,7 @@
 
 #include <AccelStepper.h>
 #include <MultiStepper.h>
+#include <ezButton.h>
 
 #include "ConfigurePin.h"
 #include "Parser.h"
@@ -13,6 +14,11 @@ extern AccelStepper Y;
 extern AccelStepper Z;
 extern AccelStepper E;
 extern MultiStepper Steppers;
+
+// End Stop
+extern ezButton XendStop;
+extern ezButton YendStop;
+extern ezButton ZendStop;
 
 // Parser
 extern ParserState parserState;

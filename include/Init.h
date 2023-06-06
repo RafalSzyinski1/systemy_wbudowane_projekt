@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 
+#include "Global.h"
 #include "Configure.h"
 
 void setupSerialPort()
@@ -36,10 +37,18 @@ void setupStepperMotors()
     Steppers.addStepper(E);
 }
 
+void setupEndStop()
+{
+    XendStop.setDebounceTime(50);
+    YendStop.setDebounceTime(50);
+    ZendStop.setDebounceTime(50);
+}
+
 void initAll()
 {
     setupSerialPort();
     setupStepperMotors();
+    setupEndStop();
 }
 
 #endif // INIT_H_

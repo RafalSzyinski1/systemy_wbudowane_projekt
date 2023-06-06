@@ -8,5 +8,11 @@ AccelStepper Z = AccelStepper(AccelStepper::DRIVER, Z_STEP_PIN, Z_DIR_PIN);
 AccelStepper E = AccelStepper(AccelStepper::DRIVER, E_STEP_PIN, E_DIR_PIN);
 MultiStepper Steppers = MultiStepper();
 
+// EndStop
+
+ezButton XendStop = ezButton(X_MAX_PIN);
+ezButton YendStop = ezButton(Y_MAX_PIN);
+ezButton ZendStop = ezButton(Z_MAX_PIN);
+
 // Parser
-ParserState parserState = {None};
+ParserState parserState = {GState::None, MState::None, -1};

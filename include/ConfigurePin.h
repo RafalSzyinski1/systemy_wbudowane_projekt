@@ -5,15 +5,15 @@
 
 #define X_STEP_PIN 2
 #define X_DIR_PIN 3
-#define X_MIN_PIN 4
+#define X_MAX_PIN 4
 
 #define Y_STEP_PIN 5
 #define Y_DIR_PIN 6
-#define Y_MIN_PIN 7
+#define Y_MAX_PIN 7
 
 #define Z_STEP_PIN 8
 #define Z_DIR_PIN 9
-#define Z_MIN_PIN 10
+#define Z_MAX_PIN 10
 
 #define E_STEP_PIN 11
 #define E_DIR_PIN 12
