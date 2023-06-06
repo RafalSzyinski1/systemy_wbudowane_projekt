@@ -2,14 +2,25 @@
 #include "Global.h"
 #include "Init.h"
 
+#include <ezButton.h>
+
+ezButton button(X_MIN_PIN);
+
+int ledState = HIGH;
+
 void setup()
 {
-    initAll();
+    pinMode(X_STEP_PIN, OUTPUT);
+    digitalWrite(X_STEP_PIN, ledState);
+    button.setDebounceTime(50);
 }
 
 void loop()
 {
-    long moves[] = {1000, 2000, 3000, 4000};
-    Steppers.moveTo(moves);
-    Steppers.run();
+    button.loop();
+
+    if (button.isReleased())
+        ledState = !ledState;
+
+    digitalWrite(X_STEP_PIN, ledState);
 }
