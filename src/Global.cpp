@@ -15,4 +15,4 @@ ezButton YendStop = ezButton(Y_MAX_PIN);
 ezButton ZendStop = ezButton(Z_MAX_PIN);
 
 // Parser
-ParserState parserState = {GState::None, MState::None, -1};
+ParserState parserState = {GState::None, MState::No, -1};

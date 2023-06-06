@@ -20,10 +20,9 @@ void loop()
 	}
 	if (data != "")
 	{
-		if (data == "M105")
-			Serial.print("ok T:50.0/60.0 B:70.0/100.0");
-		else
-			Serial.print("ok");
+		int result = parseGCodeCommand(data.c_str());
+		if (result == 1)
+			Serial.println("ok");
 	}
 	data = "";
 }
