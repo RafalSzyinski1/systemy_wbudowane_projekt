@@ -1,3 +1,6 @@
+#ifndef CONFIGURE_PIN_H_
+#define CONFIGURE_PIN_H_
+
 #define ENABLE_PIN 15
 
 #define X_STEP_PIN 2
@@ -19,3 +22,5 @@
 // #define FAN_PIN 14
 // #define HEATER_0_PIN 15
 // #define TEMP_0_PIN 16 // ANALOG NUMBERING
+
+#endif // CONFIGURE_PIN_H_

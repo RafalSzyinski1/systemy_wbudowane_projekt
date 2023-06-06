@@ -1,25 +1,15 @@
-#include <SoftwareSerial.h>
 #include <Arduino.h>
-
+#include "Global.h"
 #include "Init.h"
-#include "InitPins.h"
-
-#include "Reader.h"
-
-Reader reader;
 
 void setup()
 {
-	Init();
-	InitPins();
-	reader.detectType();
-	Serial.println("Connected");
+    initAll();
 }
 
 void loop()
 {
-	String data = reader.readData();
-	if (data != "")
-		Serial.print("T:50.0/60.0 B:70.0/100.0");
-	delay(500);
+    long moves[] = {1000, 2000, 3000, 4000};
+    Steppers.moveTo(moves);
+    Steppers.run();
 }
