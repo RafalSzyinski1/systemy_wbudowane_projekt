@@ -1,26 +1,29 @@
+
 #include <Arduino.h>
-#include "Global.h"
+
 #include "Init.h"
 
-#include <ezButton.h>
-
-ezButton button(X_MIN_PIN);
-
-int ledState = HIGH;
+String data = "";
 
 void setup()
 {
-    pinMode(X_STEP_PIN, OUTPUT);
-    digitalWrite(X_STEP_PIN, ledState);
-    button.setDebounceTime(50);
+	initAll();
+	Serial.println("Connected");
 }
 
 void loop()
 {
-    button.loop();
-
-    if (button.isReleased())
-        ledState = !ledState;
-
-    digitalWrite(X_STEP_PIN, ledState);
+	if (Serial.available())
+	{
+		data = Serial.readString();
+		data.trim();
+	}
+	if (data != "")
+	{
+		if (data == "M105")
+			Serial.print("ok T:50.0/60.0 B:70.0/100.0");
+		else
+			Serial.print("ok");
+	}
+	data = "";
 }
