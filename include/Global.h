@@ -8,6 +8,7 @@
 #include "ConfigurePin.h"
 #include "Parser.h"
 #include "Error.h"
+#include "Message.h"
 
 // Stepper Motors
 extern AccelStepper X;
@@ -23,6 +24,9 @@ extern ezButton ZendStop;
 
 // Parser
 extern ParserState parserState;
+
+// Messages
+extern Message messages;
 
 // Error
 extern Error error;

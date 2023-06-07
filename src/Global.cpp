@@ -9,13 +9,15 @@ AccelStepper E = AccelStepper(AccelStepper::DRIVER, E_STEP_PIN, E_DIR_PIN);
 MultiStepper Steppers = MultiStepper();
 
 // EndStop
-
 ezButton XendStop = ezButton(X_MAX_PIN);
 ezButton YendStop = ezButton(Y_MAX_PIN);
 ezButton ZendStop = ezButton(Z_MAX_PIN);
 
 // Parser
 ParserState parserState = {-1, 0, 0, -1};
+
+// Message
+Message messages = {0, {"\0", "\0", "\0"}};
 
 // Error
 Error error = {"\0", 0};

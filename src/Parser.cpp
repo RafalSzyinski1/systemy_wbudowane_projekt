@@ -21,6 +21,15 @@ int parseGCodeCommand(const char *command)
     if (parseNCommand(command) == -1)
         return -1;
 
+    if (parseGCommand(command) == -1)
+        return -1;
+
+    if (parseMCommand(command) == -1)
+        return -1;
+
+    if (parseTCommand(command) == -1)
+        return -1;
+
     return 0;
 }
 
@@ -39,7 +48,7 @@ int parseCommandWithNumber(const char *command, const char *letter, int *result)
     if (letterInCommand == nullptr)
         return 1;
 
-    if (*(letterInCommand + 1) < '0' || *(letterInCommand + 1) > '9')
+    if (!isdigit(*(letterInCommand + 1)) && !isdigit(*(letterInCommand + 2)))
     {
         error.errorCode = 1;
         snprintf(error.errorMessage,
@@ -56,7 +65,7 @@ int parseCheckSum(const char *command)
 {
     int checkSum = 0;
     int result = parseCommandWithNumber(command, "*", &checkSum);
-    if (result != 0)
+    if (result == -1)
         return -1;
     else if (result == 0)
     {
@@ -76,7 +85,7 @@ int parseGCommand(const char *command)
 {
     int gNumber = 0;
     int result = parseCommandWithNumber(command, "G", &gNumber);
-    if (result != 0)
+    if (result == -1)
         return -1;
     else if (result == 0)
     {
@@ -90,7 +99,7 @@ int GCommand(int number)
     if (number >= G0 && number <= G1)
         parserState.gState = number;
     else
-        return -1;
+        return 0; // TODO: for now its 0 default should be -
     return 0;
 }
 
@@ -98,12 +107,10 @@ int parseMCommand(const char *command)
 {
     int mNumber = 0;
     int result = parseCommandWithNumber(command, "M", &mNumber);
-    if (result != 0)
+    if (result == -1)
         return -1;
     else if (result == 0)
-    {
         return MCommand(mNumber);
-    }
     return 0;
 }
 
@@ -112,13 +119,14 @@ int MCommand(int number)
     switch (number)
     {
     case 105:
-        Serial.print("ok T0:200.0/200.0 T1:100.0/100.0"); // TODO: Temp
+        if (addMessage("T0:200.0/200.0 T1:100.0/100.0") == -1)
+            return -1;
         break;
     case 110:
         parserState.mState |= M110;
         break;
     default:
-        return -1;
+        return 0; // TODO: for now its 0 default should be -1
         break;
     }
 
@@ -129,7 +137,7 @@ int parseNCommand(const char *command)
 {
     int nLine = 0;
     int result = parseCommandWithNumber(command, "N", &nLine);
-    if (result != 0)
+    if (result == -1)
         return -1;
     else if (result == 0)
         return NCommand(nLine);
@@ -158,8 +166,8 @@ int NCommand(int number)
 int parseTCommand(const char *command)
 {
     int tTool = 0;
-    int result = parseCommandWithNumber(command, "N", &tTool);
-    if (result != 0)
+    int result = parseCommandWithNumber(command, "T", &tTool);
+    if (result == -1)
         return -1;
     else if (result == 0)
         return TCommand(tTool);

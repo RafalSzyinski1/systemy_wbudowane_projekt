@@ -1,11 +1,11 @@
 #ifndef ERROR_H_
 #define ERROR_H_
 
-#define ERROR_MESSAGE_SIZE 256
+#define ERROR_MESSAGE_SIZE 128
 
 struct Error
 {
-    char errorMessage[256];
+    char errorMessage[ERROR_MESSAGE_SIZE];
     int errorCode;
 };
 
@@ -16,5 +16,6 @@ struct Error
 /// 3 - error: wrong input
 /// 4 - error: wrong N-line
 /// 5 - error: wrong tool
+/// 6 - error: messages overflow
 //////////////////////////////////////
 #endif // ERROR_H_
