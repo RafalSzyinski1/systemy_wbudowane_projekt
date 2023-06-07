@@ -15,4 +15,7 @@ ezButton YendStop = ezButton(Y_MAX_PIN);
 ezButton ZendStop = ezButton(Z_MAX_PIN);
 
 // Parser
-ParserState parserState = {GState::None, MState::No, -1};
+ParserState parserState = {-1, 0, 0, -1};
+
+// Error
+Error error = {"\0", 0};

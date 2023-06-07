@@ -7,6 +7,7 @@
 
 #include "ConfigurePin.h"
 #include "Parser.h"
+#include "Error.h"
 
 // Stepper Motors
 extern AccelStepper X;
@@ -22,5 +23,8 @@ extern ezButton ZendStop;
 
 // Parser
 extern ParserState parserState;
+
+// Error
+extern Error error;
 
 #endif // GLOBAL_H_

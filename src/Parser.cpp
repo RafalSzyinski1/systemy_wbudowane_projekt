@@ -6,52 +6,108 @@
 
 int parseGCodeCommand(const char *command)
 {
-    char *checkSum = strstr(command, "*");
-    if (checkSum != nullptr)
+    if (command == nullptr)
     {
-        unsigned char sum = atoi(checkSum + 1);
-        unsigned char cSum = calculateChecksum(command);
-        Serial.println((int)cSum);
-        if (sum != cSum)
+        error.errorCode = 3;
+        snprintf(error.errorMessage,
+                 ERROR_MESSAGE_SIZE,
+                 "parseGCodeCommand | Wrong input (%p)", command);
+        return -1;
+    }
+
+    if (parseCheckSum(command) == -1)
+        return -1;
+
+    if (parseNCommand(command) == -1)
+        return -1;
+
+    return 0;
+}
+
+int parseCommandWithNumber(const char *command, const char *letter, int *result)
+{
+    if (letter == nullptr || result == nullptr)
+    {
+        error.errorCode = 3;
+        snprintf(error.errorMessage,
+                 ERROR_MESSAGE_SIZE,
+                 "parseCommandWithNumber | Wrong input (%p, %p, %p)", command, letter, result);
+        return -1;
+    }
+
+    char *letterInCommand = strstr(command, letter);
+    if (letterInCommand == nullptr)
+        return 1;
+
+    if (*(letterInCommand + 1) < '0' || *(letterInCommand + 1) > '9')
+    {
+        error.errorCode = 1;
+        snprintf(error.errorMessage,
+                 ERROR_MESSAGE_SIZE,
+                 "parseCommandWithNumber | Cannot parse number from %s", letter);
+        return -1;
+    }
+
+    *result = atoi(letterInCommand + 1);
+    return 0;
+}
+
+int parseCheckSum(const char *command)
+{
+    int checkSum = 0;
+    int result = parseCommandWithNumber(command, "*", &checkSum);
+    if (result != 0)
+        return -1;
+    else if (result == 0)
+    {
+        if (checkSum != calculateChecksum(command))
         {
-            // TODO: ERROR
-            Serial.println("ERROR: sum");
+            error.errorCode = 2;
+            snprintf(error.errorMessage,
+                     ERROR_MESSAGE_SIZE,
+                     "Wrong check sum | expect: %d, get: %d", checkSum, calculateChecksum(command));
+            return -1;
         }
     }
-
-    char *nCommand = strstr(command, "N");
-    if (nCommand != nullptr)
-    {
-        int nCommandNumber = atoi(nCommand + 1);
-        parseNCommand(nCommandNumber);
-    }
-
-    char *gCommand = strstr(command, "G");
-    if (gCommand != nullptr)
-    {
-        int gCommandNumber = atoi(gCommand + 1);
-        parseGCommand(gCommandNumber);
-    }
-
-    char *mCommand = strstr(command, "M");
-    if (mCommand != nullptr)
-    {
-        int mCommandNumber = atoi(mCommand + 1);
-        parseMCommand(mCommandNumber);
-    }
-
-    return 1;
+    return 0;
 }
 
-void parseGCommand(int number)
+int parseGCommand(const char *command)
 {
-    if (number >= G0 && number <= G3)
-        parserState.gState = (GState)number;
-    else
-        parserState.gState = GState::None;
+    int gNumber = 0;
+    int result = parseCommandWithNumber(command, "G", &gNumber);
+    if (result != 0)
+        return -1;
+    else if (result == 0)
+    {
+        return GCommand(gNumber);
+    }
+    return 0;
 }
 
-void parseMCommand(int number)
+int GCommand(int number)
+{
+    if (number >= G0 && number <= G1)
+        parserState.gState = number;
+    else
+        return -1;
+    return 0;
+}
+
+int parseMCommand(const char *command)
+{
+    int mNumber = 0;
+    int result = parseCommandWithNumber(command, "M", &mNumber);
+    if (result != 0)
+        return -1;
+    else if (result == 0)
+    {
+        return MCommand(mNumber);
+    }
+    return 0;
+}
+
+int MCommand(int number)
 {
     switch (number)
     {
@@ -61,32 +117,68 @@ void parseMCommand(int number)
     case 110:
         parserState.mState |= M110;
         break;
+    default:
+        return -1;
+        break;
     }
+
+    return 0;
 }
 
-void parseMoveCommand(int *param)
+int parseNCommand(const char *command)
 {
+    int nLine = 0;
+    int result = parseCommandWithNumber(command, "N", &nLine);
+    if (result != 0)
+        return -1;
+    else if (result == 0)
+        return NCommand(nLine);
+
+    return 0;
 }
 
-void parseNCommand(int number)
+int NCommand(int number)
 {
     if (parserState.mState & M110)
     {
         if (parserState.lastNumberLine != -1 && number != parserState.lastNumberLine + 1)
         {
-            // TODO: ERROR
-            Serial.println("ERROR: N line");
+            error.errorCode = 4;
+            snprintf(error.errorMessage,
+                     ERROR_MESSAGE_SIZE,
+                     "NCommand | Wrong line number: %d, last line number %d", number, parserState.lastNumberLine);
+            return -1;
         }
         parserState.lastNumberLine = number;
     }
+
+    return 0;
 }
-void parseTCommand(int number)
+
+int parseTCommand(const char *command)
+{
+    int tTool = 0;
+    int result = parseCommandWithNumber(command, "N", &tTool);
+    if (result != 0)
+        return -1;
+    else if (result == 0)
+        return TCommand(tTool);
+
+    return 0;
+}
+
+int TCommand(int number)
 {
     if (number != 0)
     {
-        // TODO: ERROR
-        Serial.println("ERROR: T wrong tool");
+        error.errorCode = 5;
+        snprintf(error.errorMessage,
+                 ERROR_MESSAGE_SIZE,
+                 "TCommand | Wrong tool: %d", number);
+        return -1;
     }
+
+    return 0;
 }
 
 unsigned char calculateChecksum(const char *command)
