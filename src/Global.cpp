@@ -17,7 +17,7 @@ ezButton ZendStop = ezButton(Z_MAX_PIN);
 ParserState parserState = {-1, 0, 0, -1};
 
 // Message
-Message messages = {0, {"\0", "\0", "\0"}};
+Message messages = {0, {"\0", "\0"}};
 
 // Error
-Error error = {"\0", NONE};
+Error error = {"\0", NONE, 0};

@@ -13,7 +13,7 @@ void addError(ErrorCode code, const char *fmt, ...)
                               "addError | wrong input (%p)", fmt);
 
         if (result < 0)
-            error.errorCode = ERROR_PRINTF;
+            error.printfError = 1;
         return;
     }
 
@@ -27,10 +27,17 @@ void addError(ErrorCode code, const char *fmt, ...)
 
     if (result < 0)
     {
-        error.errorCode = ERROR_PRINTF;
+        error.printfError = 1;
         return;
     }
 
     error.errorCode = code;
     error.errorMessage[result] = '\0';
+}
+
+void restartError()
+{
+    error.errorCode = NONE;
+    error.printfError = 0;
+    error.errorMessage[0] = '\0';
 }

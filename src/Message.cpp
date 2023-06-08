@@ -19,10 +19,26 @@ int addMessage(const char *fmt, ...)
 
     va_list args;
     va_start(args, fmt);
-    vsnprintf(messages.messages[messages.numOfMessages], MESSAGE_SIZE, fmt, args);
+    int result = vsnprintf(messages.messages[messages.numOfMessages],
+                           MESSAGE_SIZE,
+                           fmt,
+                           args);
     va_end(args);
 
-    messages.messages[messages.numOfMessages][sizeof(messages.messages[messages.numOfMessages]) - 1] = '\0';
+    if (result < 0)
+    {
+        addError(ERROR_PRINTF, "addMessage | vsnprintf error");
+        return -1;
+    }
+
+    messages.messages[messages.numOfMessages][result] = '\0';
     messages.numOfMessages++;
     return 0;
+}
+
+void restartMessage()
+{
+    messages.numOfMessages = 0;
+    for (int i = 0; i < MESSAGE_NUM; ++i)
+        messages.messages[i][0] = '\0';
 }

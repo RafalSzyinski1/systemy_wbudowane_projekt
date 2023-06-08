@@ -3,8 +3,8 @@
 
 #include <Arduino.h>
 
-#define MESSAGE_SIZE 128
-#define MESSAGE_NUM 3
+#define MESSAGE_SIZE 90
+#define MESSAGE_NUM 2
 
 struct Message
 {
@@ -13,5 +13,6 @@ struct Message
 };
 
 int addMessage(const char *fmt, ...);
+void restartMessage();
 
 #endif // MESSAGE_H_

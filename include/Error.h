@@ -1,7 +1,9 @@
 #ifndef ERROR_H_
 #define ERROR_H_
 
-#define ERROR_MESSAGE_SIZE 128
+#include <Arduino.h>
+
+#define ERROR_MESSAGE_SIZE 90
 
 enum ErrorCode
 {
@@ -19,8 +21,10 @@ struct Error
 {
     char errorMessage[ERROR_MESSAGE_SIZE];
     ErrorCode errorCode;
+    uint8_t printfError;
 };
 
 void addError(ErrorCode code, const char *fmt, ...);
+void restartError();
 
 #endif // ERROR_H_
