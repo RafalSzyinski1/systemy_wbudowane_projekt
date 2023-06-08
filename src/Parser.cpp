@@ -8,23 +8,20 @@ int parseGCodeCommand(const char *command)
 {
     if (command == nullptr)
     {
-        error.errorCode = 3;
-        snprintf(error.errorMessage,
-                 ERROR_MESSAGE_SIZE,
-                 "parseGCodeCommand | Wrong input (%p)", command);
+        addError(ERROR_INPUT, "parseGCodeCommand | Wrong input (%p)", command);
         return -1;
     }
 
     if (parseCheckSum(command) == -1)
         return -1;
 
+    if (parseMCommand(command) == -1)
+        return -1;
+
     if (parseNCommand(command) == -1)
         return -1;
 
     if (parseGCommand(command) == -1)
-        return -1;
-
-    if (parseMCommand(command) == -1)
         return -1;
 
     if (parseTCommand(command) == -1)
@@ -37,10 +34,7 @@ int parseCommandWithNumber(const char *command, const char *letter, int *result)
 {
     if (letter == nullptr || result == nullptr)
     {
-        error.errorCode = 3;
-        snprintf(error.errorMessage,
-                 ERROR_MESSAGE_SIZE,
-                 "parseCommandWithNumber | Wrong input (%p, %p, %p)", command, letter, result);
+        addError(ERROR_INPUT, "parseCommandWithNumber | Wrong input (%p, %p, %p)", command, letter, result);
         return -1;
     }
 
@@ -50,10 +44,7 @@ int parseCommandWithNumber(const char *command, const char *letter, int *result)
 
     if (!isdigit(*(letterInCommand + 1)) && !isdigit(*(letterInCommand + 2)))
     {
-        error.errorCode = 1;
-        snprintf(error.errorMessage,
-                 ERROR_MESSAGE_SIZE,
-                 "parseCommandWithNumber | Cannot parse number from %s", letter);
+        addError(ERROR_PARSE_NUMBER, "parseCommandWithNumber | Cannot parse number from %s", letter);
         return -1;
     }
 
@@ -71,10 +62,7 @@ int parseCheckSum(const char *command)
     {
         if (checkSum != calculateChecksum(command))
         {
-            error.errorCode = 2;
-            snprintf(error.errorMessage,
-                     ERROR_MESSAGE_SIZE,
-                     "Wrong check sum | expect: %d, get: %d", checkSum, calculateChecksum(command));
+            addError(ERROR_CHECKSUM, "Wrong check sum | expect: %d, get: %d", checkSum, calculateChecksum(command));
             return -1;
         }
     }
@@ -151,10 +139,7 @@ int NCommand(int number)
     {
         if (parserState.lastNumberLine != -1 && number != parserState.lastNumberLine + 1)
         {
-            error.errorCode = 4;
-            snprintf(error.errorMessage,
-                     ERROR_MESSAGE_SIZE,
-                     "NCommand | Wrong line number: %d, last line number %d", number, parserState.lastNumberLine);
+            addError(ERROR_NLINE, "NCommand | Wrong line number: %d, last line number %d", number, parserState.lastNumberLine);
             return -1;
         }
         parserState.lastNumberLine = number;
@@ -179,10 +164,7 @@ int TCommand(int number)
 {
     if (number != 0)
     {
-        error.errorCode = 5;
-        snprintf(error.errorMessage,
-                 ERROR_MESSAGE_SIZE,
-                 "TCommand | Wrong tool: %d", number);
+        addError(ERROR_TOOL, "TCommand | Wrong tool: %d", number);
         return -1;
     }
 

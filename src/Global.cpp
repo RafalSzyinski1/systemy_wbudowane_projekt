@@ -20,4 +20,4 @@ ParserState parserState = {-1, 0, 0, -1};
 Message messages = {0, {"\0", "\0", "\0"}};
 
 // Error
-Error error = {"\0", 0};
+Error error = {"\0", NONE};

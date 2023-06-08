@@ -40,7 +40,7 @@ void loop()
 			Serial.println(error.errorCode);
 			Serial.println(error.errorMessage);
 
-			error.errorCode = 0;
+			error.errorCode = NONE;
 			error.errorMessage[0] = '\0';
 		}
 	}

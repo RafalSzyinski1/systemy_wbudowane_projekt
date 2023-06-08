@@ -3,17 +3,17 @@
 #include "Error.h"
 #include "Global.h"
 
-void addError(int code, const char *fmt, ...)
+void addError(ErrorCode code, const char *fmt, ...)
 {
     if (fmt == nullptr)
     {
-        error.errorCode = 3;
+        error.errorCode = ERROR_INPUT;
         int result = snprintf(error.errorMessage,
                               ERROR_MESSAGE_SIZE,
                               "addError | wrong input (%p)", fmt);
 
         if (result < 0)
-            error.errorCode = 7;
+            error.errorCode = ERROR_PRINTF;
         return;
     }
 
@@ -27,7 +27,7 @@ void addError(int code, const char *fmt, ...)
 
     if (result < 0)
     {
-        error.errorCode = 7;
+        error.errorCode = ERROR_PRINTF;
         return;
     }
 

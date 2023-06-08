@@ -5,12 +5,15 @@
 
 int addMessage(const char *fmt, ...)
 {
+    if (fmt == nullptr)
+    {
+        addError(ERROR_INPUT, "addMessage | wrong input fmt == nullptr");
+        return -1;
+    }
+
     if (messages.numOfMessages >= MESSAGE_NUM)
     {
-        error.errorCode = 6;
-        snprintf(error.errorMessage,
-                 ERROR_MESSAGE_SIZE,
-                 "addMessage | message overflow: %s", fmt);
+        addError(ERROR_MESSAGE_OVERFLOW, "addMessage | message overflow: %s", fmt);
         return -1;
     }
 

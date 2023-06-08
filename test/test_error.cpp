@@ -15,30 +15,30 @@ void tearDown(void)
 
 void test_add_error_simple()
 {
-    addError(1, "error while parse command with number");
+    addError(ERROR_PARSE_NUMBER, "error while parse command with number");
 
-    TEST_ASSERT_EQUAL(1, error.errorCode);
+    TEST_ASSERT_EQUAL(ERROR_PARSE_NUMBER, error.errorCode);
     TEST_ASSERT_EQUAL_STRING("error while parse command with number", error.errorMessage);
 }
 
 void test_add_error_no_message()
 {
-    addError(0, "");
-    TEST_ASSERT_EQUAL(0, error.errorCode);
+    addError(ERROR_PARSE_NUMBER, "");
+    TEST_ASSERT_EQUAL(ERROR_PARSE_NUMBER, error.errorCode);
     TEST_ASSERT_EQUAL_STRING("", error.errorMessage);
 }
 
 void test_add_error_null_message()
 {
-    addError(0, nullptr);
-    TEST_ASSERT_EQUAL(3, error.errorCode);
+    addError(ERROR_PARSE_NUMBER, nullptr);
+    TEST_ASSERT_EQUAL(ERROR_INPUT, error.errorCode);
     TEST_ASSERT_EQUAL_STRING("addError | wrong input (0)", error.errorMessage);
 }
 
 void test_add_error_long_message()
 {
-    addError(0, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-    TEST_ASSERT_EQUAL(0, error.errorCode);
+    addError(ERROR_PARSE_NUMBER, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    TEST_ASSERT_EQUAL(ERROR_PARSE_NUMBER, error.errorCode);
     char expected[ERROR_MESSAGE_SIZE];
 
     memset(expected, 'a', ERROR_MESSAGE_SIZE);
@@ -49,15 +49,15 @@ void test_add_error_long_message()
 
 void test_add_error_too_many_args()
 {
-    addError(0, "%d %d %d", 1, 2, 3, 4);
-    TEST_ASSERT_EQUAL(0, error.errorCode);
+    addError(ERROR_PARSE_NUMBER, "%d %d %d", 1, 2, 3, 4);
+    TEST_ASSERT_EQUAL(ERROR_PARSE_NUMBER, error.errorCode);
     TEST_ASSERT_EQUAL_STRING("1 2 3", error.errorMessage);
 }
 
 void test_add_error_not_enough_args()
 {
-    addError(0, "%d %d %d", 1, 2);
-    TEST_ASSERT_EQUAL(0, error.errorCode);
+    addError(ERROR_PARSE_NUMBER, "%d %d %d", 1, 2);
+    TEST_ASSERT_EQUAL(ERROR_PARSE_NUMBER, error.errorCode);
     TEST_ASSERT_EQUAL_STRING("1 2 0", error.errorMessage);
 }
 
