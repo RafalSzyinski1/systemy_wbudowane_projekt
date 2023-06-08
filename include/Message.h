@@ -12,6 +12,6 @@ struct Message
     char messages[MESSAGE_NUM][MESSAGE_SIZE];
 };
 
-int addMessage(const char *format, ...);
+int addMessage(const char *fmt, ...);
 
 #endif // MESSAGE_H_

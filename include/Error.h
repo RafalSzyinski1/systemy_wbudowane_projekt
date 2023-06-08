@@ -9,6 +9,8 @@ struct Error
     int errorCode;
 };
 
+void addError(int code, const char *fmt, ...);
+
 ///////////////////////////////////////
 /// ERROR CODES:
 /// 1 - error while parse command with number
@@ -17,5 +19,6 @@ struct Error
 /// 4 - error: wrong N-line
 /// 5 - error: wrong tool
 /// 6 - error: messages overflow
+/// 7 - sprintf error
 //////////////////////////////////////
 #endif // ERROR_H_
