@@ -3,40 +3,42 @@
 
 enum GState
 {
+    GNone,
     G0,
     G1,
 };
 
 enum MState
 {
-    None = 0,
+    MNone = 0,
     M110 = 1 << 0,
 };
 
 struct ParserState
 {
-    int gState;
-    unsigned int feedrate;
+    unsigned int gState;
     unsigned int mState;
-    int lastNumberLine;
+    long lastNumberLine;
 };
 
-int parseGCodeCommand(const char *command);
-int parseCommandWithNumber(const char *command, const char *letter, int *result);
+short parseGCodeCommand(const char *command);
+short parseCommandWithInt(const char *command, const char *letter, int *result);
+short parseCommandWithLong(const char *command, const char *letter, long *result);
+short parseCommandWithFloat(const char *command, const char *letter, float *result);
 
-int parseCheckSum(const char *command);
+short parseCheckSum(const char *command);
 unsigned char calculateChecksum(const char *command);
 
-int parseGCommand(const char *command);
-int GCommand(int number);
+short parseGCommand(const char *command);
+short GCommand(int number);
 
-int parseMCommand(const char *command);
-int MCommand(int number);
+short parseMCommand(const char *command);
+short MCommand(int number);
 
-int parseNCommand(const char *command);
-int NCommand(int number);
+short parseNCommand(const char *command);
+short NCommand(long number);
 
-int parseTCommand(const char *command);
-int TCommand(int number);
+short parseTCommand(const char *command);
+short TCommand(int number);
 
 #endif // PARSER_H_

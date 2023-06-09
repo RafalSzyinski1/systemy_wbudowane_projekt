@@ -14,7 +14,7 @@ ezButton YendStop = ezButton(Y_MAX_PIN);
 ezButton ZendStop = ezButton(Z_MAX_PIN);
 
 // Parser
-ParserState parserState = {-1, 0, 0, -1};
+ParserState parserState = {GNone, MNone, 0};
 
 // Message
 Message messages = {0, {"\0", "\0"}};

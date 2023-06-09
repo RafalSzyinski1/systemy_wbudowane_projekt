@@ -3,6 +3,7 @@
 #include "Global.h"
 #include "Message.h"
 #include "Error.h"
+#include "Parser.h"
 
 void setUp()
 {

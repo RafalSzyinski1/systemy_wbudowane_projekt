@@ -2,6 +2,7 @@
 #include <Arduino.h>
 
 #include "Init.h"
+#include "Parser.h"
 
 String data = "";
 
@@ -20,7 +21,7 @@ void loop()
 	}
 	if (data != "")
 	{
-		int result = parseGCodeCommand(data.c_str());
+		short result = parseGCodeCommand(data.c_str());
 		if (result == 0)
 		{
 			Serial.print("ok");
