@@ -25,4 +25,11 @@
 #define E_STEPS_PER_REVOLUTION 4096.0
 #define E_DEGREES_PER_REVOLUTION 360.0
 
+// Hotend
+
+// Min/Max hotend temperature
+#define MINTEMP 80
+#define MAXTEMP 200
+#define AUTOTEMP 0.98
+
 #endif // CONFIGURE_H_
