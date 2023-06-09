@@ -2,8 +2,14 @@
 
 #include "Printer.h"
 
-short setHotendTemperature()
+short homing()
 {
-    // TODO nothing for now
+    // TODO
+    return 0;
+}
+
+short setStartPosition()
+{
+    // TODO
     return 0;
 }

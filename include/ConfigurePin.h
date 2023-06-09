@@ -1,7 +1,7 @@
 #ifndef CONFIGURE_PIN_H_
 #define CONFIGURE_PIN_H_
 
-#define ENABLE_PIN 15
+#define ENABLE_PIN 13
 
 #define X_STEP_PIN 2
 #define X_DIR_PIN 3
@@ -17,7 +17,6 @@
 
 #define E_STEP_PIN 11
 #define E_DIR_PIN 12
-#define E_ENABLE_PIN 13
 
 // #define FAN_PIN 14
 // #define HEATER_0_PIN 15

@@ -4,6 +4,10 @@
 // Serial Port
 #define BAUDRATE 115200
 
+// Printer
+#define WIDTH 800
+#define HEIGHT 800
+
 // Stepper
 #define X_MAX_SPEED 500.0
 #define X_ACCELERATION 100.0
@@ -25,7 +29,8 @@
 #define E_STEPS_PER_REVOLUTION 4096.0
 #define E_DEGREES_PER_REVOLUTION 360.0
 
-// Hotend
+// Tools
+#define NUM_OF_TOOLS 1
 
 // Min/Max hotend temperature
 #define MINTEMP 80

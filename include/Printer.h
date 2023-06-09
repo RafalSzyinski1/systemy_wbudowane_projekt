@@ -1,17 +1,28 @@
 #ifndef PRINTER_H_
 #define PRINTER_H_
 
-struct PrinterState
+enum ToolCode
 {
-    unsigned int feedrate;
-    unsigned int fanspeed;
-
-    // hotend
-    unsigned int target_hotend_temp;
-    unsigned int hotend_temp; // TODO; temp var (replace getTemp);
+    TNone = -1,
+    T0,
 };
 
-short setHotendTemperature();
+struct ToolState
+{
+    ToolCode toolCode;
+    // hotend
+    unsigned int targetHotendTemp;
+    unsigned int hotendTemp; // TODO; temp var (replace getTemp);
+};
+
+struct PriterState
+{
+    ToolCode toolSelected;
+    unsigned int feedrate;
+    unsigned int fanspeed;
+};
+
 short homing();
+short setStartPosition();
 
 #endif // PRINTER_H_
