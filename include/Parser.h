@@ -1,13 +1,6 @@
 #ifndef PARSER_H_
 #define PARSER_H_
 
-enum GState
-{
-    GNone,
-    G0,
-    G1,
-};
-
 enum MState
 {
     MNone = 0,
@@ -16,7 +9,6 @@ enum MState
 
 struct ParserState
 {
-    unsigned int gState;
     unsigned int mState;
     long lastNumberLine;
 };
@@ -25,6 +17,8 @@ short parseGCodeCommand(const char *command);
 short parseCommandWithInt(const char *command, const char *letter, int *result);
 short parseCommandWithLong(const char *command, const char *letter, long *result);
 short parseCommandWithFloat(const char *command, const char *letter, float *result);
+
+void deleteComments(const char *command);
 
 short parseCheckSum(const char *command);
 unsigned char calculateChecksum(const char *command);

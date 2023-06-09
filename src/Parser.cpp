@@ -13,6 +13,8 @@ short parseGCodeCommand(const char *command)
         return -1;
     }
 
+    deleteComments(command);
+
     if (parseCheckSum(command) == -1)
         return -1;
 
@@ -29,6 +31,13 @@ short parseGCodeCommand(const char *command)
         return -1;
 
     return 0;
+}
+
+void deleteComments(const char *command)
+{
+    char *comment = strstr(command, ";");
+    if (comment != nullptr)
+        *comment = '\0';
 }
 
 short parseCommandWithInt(const char *command, const char *letter, int *result)
@@ -144,10 +153,24 @@ short parseGCommand(const char *command)
 
 short GCommand(int number)
 {
-    if (number >= G0 && number <= G1)
-        parserState.gState = number;
-    else
-        return 0; // TODO: for now its 0 default should be -
+    switch (number)
+    {
+    case 0:
+        // Move fast
+        break;
+    case 1:
+        // Move with framefate
+        break;
+    case 28:
+        homing();
+        break;
+    case 92:
+        setStartPosition();
+        break;
+    default:
+        return -1;
+        break;
+    }
     return 0;
 }
 
@@ -166,24 +189,44 @@ short MCommand(int number)
 {
     switch (number)
     {
+    case 17:
+        X.enableOutputs();
+        Y.enableOutputs();
+        Z.enableOutputs();
+        E.enableOutputs();
+        break;
     case 82:
-        E.setCurrentPosition(0);
+    case 83:
+        // Relative, Absolute codes (ignore)
+        break;
+    case 84:
+        X.disableOutputs();
+        Y.disableOutputs();
+        Z.disableOutputs();
+        E.disableOutputs();
         break;
     case 104:
-        setHotendTemperature(); // TODO: replace went hot end
+        // TODO: hotend fun
         break;
     case 105:
         if (addMessage("T0:200.0/200.0 T1:100.0/100.0") == -1) // TODO: Temp message
             return -1;
         break;
+    case 107:
+        // TODO: fan off
+        break;
     case 109:
-        setHotendTemperature(); // TODO: replace went hot end
+        // TODO: hotend fun
         break;
     case 110:
         parserState.mState |= M110;
+        parserState.lastNumberLine = -1;
+        break;
+    case 140:
+        // TODO: hot bed fun
         break;
     default:
-        return 0; // TODO: for now its 0 default should be -1
+        return -1;
         break;
     }
 
