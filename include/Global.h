@@ -9,18 +9,25 @@
 #include "Parser.h"
 #include "Error.h"
 #include "Message.h"
+#include "Printer.h"
 
 // Stepper Motors
-extern AccelStepper X;
-extern AccelStepper Y;
-extern AccelStepper Z;
-extern AccelStepper E;
+extern AccelStepper XMotor;
+extern AccelStepper YMotor;
+extern AccelStepper ZMotor;
+extern AccelStepper EMotor;
 extern MultiStepper Steppers;
 
 // End Stop
 extern ezButton XendStop;
 extern ezButton YendStop;
 extern ezButton ZendStop;
+
+// Tools
+extern ToolState tools[];
+
+// Printer
+extern PrinterState printer;
 
 // Parser
 extern ParserState parserState;
