@@ -6,7 +6,6 @@
 enum ErrorCode
 {
     NONE,
-    ERROR_PARSE_NUMBER,
     ERROR_CHECKSUM,
     ERROR_INPUT,
     ERROR_NLINE,

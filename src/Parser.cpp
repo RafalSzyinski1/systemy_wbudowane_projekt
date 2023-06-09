@@ -42,7 +42,7 @@ void deleteComments(const char *command)
 
 short parseCommandWithInt(const char *command, const char *letter, int *result)
 {
-    if (letter == nullptr || result == nullptr)
+    if (letter == nullptr)
     {
         addError(ERROR_INPUT, "parseCommandWithInt | Wrong input (%p, %p, %p)", command, letter, result);
         return -1;
@@ -53,18 +53,16 @@ short parseCommandWithInt(const char *command, const char *letter, int *result)
         return 1;
 
     if (!isdigit(*(letterInCommand + 1)) && !isdigit(*(letterInCommand + 2)))
-    {
-        addError(ERROR_PARSE_NUMBER, "parseCommandWithInt | Cannot parse number from %s", letter);
-        return -1;
-    }
+        return 2;
 
-    *result = atoi(letterInCommand + 1);
+    if (result != nullptr)
+        *result = atoi(letterInCommand + 1);
     return 0;
 }
 
 short parseCommandWithLong(const char *command, const char *letter, long *result)
 {
-    if (letter == nullptr || result == nullptr)
+    if (letter == nullptr)
     {
         addError(ERROR_INPUT, "parseCommandWithLong | Wrong input (%p, %p, %p)", command, letter, result);
         return -1;
@@ -72,21 +70,19 @@ short parseCommandWithLong(const char *command, const char *letter, long *result
 
     char *letterInCommand = strstr(command, letter);
     if (letterInCommand == nullptr)
-        return 1;
+        return 1; // No such letter
 
     if (!isdigit(*(letterInCommand + 1)) && !isdigit(*(letterInCommand + 2)))
-    {
-        addError(ERROR_PARSE_NUMBER, "parseCommandWithLong | Cannot parse number from %s", letter);
-        return -1;
-    }
+        return 2; // Is letter but without number
 
-    *result = atol(letterInCommand + 1);
+    if (result != nullptr)
+        *result = atol(letterInCommand + 1);
     return 0;
 }
 
 short parseCommandWithFloat(const char *command, const char *letter, float *result)
 {
-    if (letter == nullptr || result == nullptr)
+    if (letter == nullptr)
     {
         addError(ERROR_INPUT, "parseCommandWithFloat | Wrong input (%p, %p, %p)", command, letter, result);
         return -1;
@@ -97,12 +93,10 @@ short parseCommandWithFloat(const char *command, const char *letter, float *resu
         return 1;
 
     if (!isdigit(*(letterInCommand + 1)) && !isdigit(*(letterInCommand + 2)))
-    {
-        addError(ERROR_PARSE_NUMBER, "parseCommandWithFloat | Cannot parse number from %s", letter);
-        return -1;
-    }
+        return 2;
 
-    *result = atof(letterInCommand + 1);
+    if (result != nullptr)
+        *result = atof(letterInCommand + 1);
     return 0;
 }
 
@@ -110,7 +104,7 @@ short parseCheckSum(const char *command)
 {
     int checkSum = 0;
     short result = parseCommandWithInt(command, "*", &checkSum);
-    if (result == -1)
+    if (result == -1 || result == 2)
         return -1;
     else if (result == 0)
     {
@@ -142,7 +136,7 @@ short parseGCommand(const char *command)
 {
     int gNumber = 0;
     short result = parseCommandWithInt(command, "G", &gNumber);
-    if (result == -1)
+    if (result == -1 || result == 2)
         return -1;
     else if (result == 0)
     {
@@ -162,7 +156,8 @@ short GCommand(int number)
         // Move with framefate
         break;
     case 28:
-        homing();
+        printer.isWaitFunction = 1;
+        printer.waitFuntion = homing;
         break;
     case 92:
         setStartPosition();
@@ -178,7 +173,7 @@ short parseMCommand(const char *command)
 {
     int mNumber = 0;
     short result = parseCommandWithInt(command, "M", &mNumber);
-    if (result == -1)
+    if (result == -1 || result == 2)
         return -1;
     else if (result == 0)
         return MCommand(mNumber);
@@ -190,20 +185,22 @@ short MCommand(int number)
     switch (number)
     {
     case 17:
-        X.enableOutputs();
-        Y.enableOutputs();
-        Z.enableOutputs();
-        E.enableOutputs();
+        XMotor.enableOutputs();
+        YMotor.enableOutputs();
+        ZMotor.enableOutputs();
+        EMotor.enableOutputs();
         break;
     case 82:
     case 83:
         // Relative, Absolute codes (ignore)
         break;
+    case 18:
     case 84:
-        X.disableOutputs();
-        Y.disableOutputs();
-        Z.disableOutputs();
-        E.disableOutputs();
+        // TODO param
+        XMotor.disableOutputs();
+        YMotor.disableOutputs();
+        ZMotor.disableOutputs();
+        EMotor.disableOutputs();
         break;
     case 104:
         // TODO: hotend fun
@@ -237,7 +234,7 @@ short parseNCommand(const char *command)
 {
     long nLine = 0;
     short result = parseCommandWithLong(command, "N", &nLine);
-    if (result == -1)
+    if (result == -1 || result == 2)
         return -1;
     else if (result == 0)
         return NCommand(nLine);
@@ -264,7 +261,7 @@ short parseTCommand(const char *command)
 {
     int tTool = 0;
     short result = parseCommandWithInt(command, "T", &tTool);
-    if (result == -1)
+    if (result == -1 || result == 2)
         return -1;
     else if (result == 0)
         return TCommand(tTool);
