@@ -4,6 +4,8 @@
 #include "Message.h"
 #include "Error.h"
 #include "Parser.h"
+#include "MCommand.h"
+#include "GCommand.h"
 
 void setUp()
 {
@@ -251,12 +253,103 @@ void test_parseCheckSum()
     TEST_ASSERT_EQUAL(ERROR_CHECKSUM, error.errorCode);
 }
 
+void test_NCommand()
+{
+    parserState.lastNumberLine = -1;
+    parserState.mState = MNone;
+    float params[PARAM_COUNT];
+    for (size_t i = G; i < PARAM_COUNT; ++i)
+        params[i] = NAN;
+
+    params[N] = -1;
+    TEST_ASSERT_EQUAL(0, NCommand(params));
+    TEST_ASSERT_EQUAL(-1, parserState.lastNumberLine);
+    params[N] = 0;
+    TEST_ASSERT_EQUAL(0, NCommand(params));
+    TEST_ASSERT_EQUAL(-1, parserState.lastNumberLine);
+    params[N] = 8;
+    TEST_ASSERT_EQUAL(0, NCommand(params));
+    TEST_ASSERT_EQUAL(-1, parserState.lastNumberLine);
+    params[N] = -1;
+    TEST_ASSERT_EQUAL(0, NCommand(params));
+    TEST_ASSERT_EQUAL(-1, parserState.lastNumberLine);
+
+    parserState.mState = M110;
+
+    params[N] = -1;
+    TEST_ASSERT_EQUAL(0, NCommand(params));
+    TEST_ASSERT_EQUAL(-1, parserState.lastNumberLine);
+    params[N] = 0;
+    TEST_ASSERT_EQUAL(0, NCommand(params));
+    TEST_ASSERT_EQUAL(0, parserState.lastNumberLine);
+    params[N] = 1;
+    TEST_ASSERT_EQUAL(0, NCommand(params));
+    TEST_ASSERT_EQUAL(1, parserState.lastNumberLine);
+    params[N] = 2;
+    TEST_ASSERT_EQUAL(0, NCommand(params));
+    TEST_ASSERT_EQUAL(2, parserState.lastNumberLine);
+
+    params[N] = 3;
+    TEST_ASSERT_EQUAL(0, NCommand(params));
+    TEST_ASSERT_EQUAL(3, parserState.lastNumberLine);
+    params[N] = 0;
+    TEST_ASSERT_EQUAL(-1, NCommand(params));
+    TEST_ASSERT_EQUAL(ERROR_NLINE, error.errorCode);
+
+    params[M] = 110;
+    MCommand(params);
+    params[M] = NAN;
+    error.errorCode = NONE;
+
+    params[N] = -1;
+    TEST_ASSERT_EQUAL(0, NCommand(params));
+    TEST_ASSERT_EQUAL(-1, parserState.lastNumberLine);
+    params[N] = 0;
+    TEST_ASSERT_EQUAL(0, NCommand(params));
+    TEST_ASSERT_EQUAL(0, parserState.lastNumberLine);
+    params[N] = 1;
+    TEST_ASSERT_EQUAL(0, NCommand(params));
+    TEST_ASSERT_EQUAL(1, parserState.lastNumberLine);
+    params[N] = 2;
+    TEST_ASSERT_EQUAL(0, NCommand(params));
+    TEST_ASSERT_EQUAL(2, parserState.lastNumberLine);
+
+    params[N] = 3;
+    TEST_ASSERT_EQUAL(0, NCommand(params));
+    TEST_ASSERT_EQUAL(3, parserState.lastNumberLine);
+    params[N] = 0;
+    TEST_ASSERT_EQUAL(-1, NCommand(params));
+    TEST_ASSERT_EQUAL(ERROR_NLINE, error.errorCode);
+}
+
+void test_TCommand()
+{
+    float params[PARAM_COUNT];
+    for (size_t i = G; i < PARAM_COUNT; ++i)
+        params[i] = NAN;
+
+    params[T] = T0;
+    TEST_ASSERT_EQUAL(0, TCommand(params));
+    params[N] = -1;
+    TEST_ASSERT_EQUAL(0, TCommand(params));
+    params[T] = 1;
+    TEST_ASSERT_EQUAL(-1, TCommand(params));
+    TEST_ASSERT_EQUAL(ERROR_TOOL, error.errorCode);
+    error.errorCode = NONE;
+    params[X] = 100;
+    TEST_ASSERT_EQUAL(0, TCommand(params));
+    params[T] = T0;
+    TEST_ASSERT_EQUAL(0, TCommand(params));
+}
+
 void run_parser_test()
 {
     RUN_TEST(test_parseCommandWithFloat);
     RUN_TEST(test_deleteComments);
     RUN_TEST(test_calculateChecksum);
     RUN_TEST(test_parseCheckSum);
+    RUN_TEST(test_NCommand);
+    RUN_TEST(test_TCommand);
 }
 
 int main(int argc, char **argv)
