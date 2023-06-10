@@ -3,6 +3,7 @@
 
 void M17(float *params);
 void M84(float *params);
+void M114(float *params);
 short MCommand(float *params);
 
 #endif // MCOMMAND_H_

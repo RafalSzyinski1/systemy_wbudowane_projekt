@@ -4,7 +4,9 @@
 enum MState
 {
     MNone = 0,
-    M110 = 1 << 0,
+    M82 = 1 << 0,
+    M83 = 1 << 1,
+    M110 = 1 << 2,
 };
 
 struct ParserState

@@ -3,6 +3,59 @@
 #include "MCommand.h"
 #include "Global.h"
 
+short MCommand(float *params)
+{
+    if (isnanf(params[M]))
+        return 0;
+
+    switch ((int)params[M])
+    {
+    case 17:
+        M17(params);
+        break;
+    case 82:
+        parserState.mState |= M82;
+        parserState.mState &= ~M83;
+        break;
+    case 83:
+        parserState.mState |= M83;
+        parserState.mState &= ~M82;
+        break;
+    case 18:
+    case 84:
+        M84(params);
+        break;
+    case 104:
+        // TODO: hotend fun
+        break;
+    case 105:
+        if (addMessage("T0:200.0/200.0 T1:100.0/100.0") == -1) // TODO: Temp message
+            return -1;
+        break;
+    case 107:
+        // TODO: fan off
+        break;
+    case 109:
+        // TODO: hotend fun
+        break;
+    case 110:
+        parserState.mState |= M110;
+        parserState.lastNumberLine = -1;
+        break;
+    case 114:
+
+        break;
+    case 140:
+        // TODO: hot bed fun
+        break;
+    default:
+        return -1;
+        break;
+    }
+
+    return 0;
+}
+
 void M17(float *params)
 {
     if (!isnanf(params[X]))
@@ -47,48 +100,22 @@ void M84(float *params)
     }
 }
 
-short MCommand(float *params)
+void M114(float *params)
 {
-    if (isnanf(params[M]))
-        return 0;
-
-    switch ((int)params[M])
+    if (!isnanf(params[E]))
     {
-    case 17:
-        M17(params);
-        break;
-    case 82:
-    case 83:
-        // Relative, Absolute codes (ignore)
-        break;
-    case 18:
-    case 84:
-        M84(params);
-        break;
-    case 104:
-        // TODO: hotend fun
-        break;
-    case 105:
-        if (addMessage("T0:200.0/200.0 T1:100.0/100.0") == -1) // TODO: Temp message
-            return -1;
-        break;
-    case 107:
-        // TODO: fan off
-        break;
-    case 109:
-        // TODO: hotend fun
-        break;
-    case 110:
-        parserState.mState |= M110;
-        parserState.lastNumberLine = -1;
-        break;
-    case 140:
-        // TODO: hot bed fun
-        break;
-    default:
-        return -1;
-        break;
+        Serial.print("E");
+        Serial.println(EMotor.currentPosition());
     }
-
-    return 0;
+    else
+    {
+        Serial.print("X");
+        Serial.print(XMotor.currentPosition());
+        Serial.print("Y");
+        Serial.print(YMotor.currentPosition());
+        Serial.print("Z");
+        Serial.print(ZMotor.currentPosition());
+        Serial.print("E");
+        Serial.println(EMotor.currentPosition());
+    }
 }
