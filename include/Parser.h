@@ -10,12 +10,26 @@ enum MState
 struct ParserState
 {
     unsigned int mState;
-    long lastNumberLine;
+    int lastNumberLine;
+};
+
+enum Param
+{
+    G,
+    M,
+    N,
+    T,
+    X,
+    Y,
+    Z,
+    E,
+    F,
+    S,
+    R,
+    PARAM_COUNT
 };
 
 short parseGCodeCommand(const char *command);
-short parseCommandWithInt(const char *command, const char *letter, int *result);
-short parseCommandWithLong(const char *command, const char *letter, long *result);
 short parseCommandWithFloat(const char *command, const char *letter, float *result);
 
 void deleteComments(const char *command);
@@ -23,16 +37,7 @@ void deleteComments(const char *command);
 short parseCheckSum(const char *command);
 unsigned char calculateChecksum(const char *command);
 
-short parseGCommand(const char *command);
-short GCommand(int number);
-
-short parseMCommand(const char *command);
-short MCommand(int number);
-
-short parseNCommand(const char *command);
-short NCommand(long number);
-
-short parseTCommand(const char *command);
-short TCommand(int number);
+short NCommand(float *params);
+short TCommand(float *params);
 
 #endif // PARSER_H_

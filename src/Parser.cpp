@@ -4,6 +4,20 @@
 #include "Parser.h"
 #include "Global.h"
 #include "Printer.h"
+#include "GCommand.h"
+#include "MCommand.h"
+
+#define CASE_PARSE_FUNCTION(ParamType)                                \
+    case #ParamType[0]:                                               \
+        number = 0.0;                                                 \
+        result = parseCommandWithFloat(command, #ParamType, &number); \
+        if (result == -1)                                             \
+            return -1;                                                \
+        else if (result == 0)                                         \
+            params[ParamType] = number;                               \
+        else if (result == 2)                                         \
+            params[ParamType] = 0;                                    \
+        break;
 
 short parseGCodeCommand(const char *command)
 {
@@ -18,65 +32,49 @@ short parseGCodeCommand(const char *command)
     if (parseCheckSum(command) == -1)
         return -1;
 
-    if (parseMCommand(command) == -1)
-        return -1;
+    float params[PARAM_COUNT];
+    for (size_t i = 0; i < PARAM_COUNT; ++i)
+        params[i] = NAN;
+    float number = 0.0;
+    short result = 0;
+    char *commandCopy = strdup(command);
+    char *parameter = strtok(commandCopy, " ");
 
-    if (parseNCommand(command) == -1)
-        return -1;
-
-    if (parseGCommand(command) == -1)
-        return -1;
-
-    if (parseTCommand(command) == -1)
-        return -1;
-
-    return 0;
-}
-
-void deleteComments(const char *command)
-{
-    char *comment = strstr(command, ";");
-    if (comment != nullptr)
-        *comment = '\0';
-}
-
-short parseCommandWithInt(const char *command, const char *letter, int *result)
-{
-    if (letter == nullptr)
+    while (parameter != nullptr)
     {
-        addError(ERROR_INPUT, "parseCommandWithInt | Wrong input (%p, %p, %p)", command, letter, result);
-        return -1;
+        switch (parameter[0])
+        {
+            CASE_PARSE_FUNCTION(G);
+            CASE_PARSE_FUNCTION(M);
+            CASE_PARSE_FUNCTION(N);
+            CASE_PARSE_FUNCTION(T);
+            CASE_PARSE_FUNCTION(X);
+            CASE_PARSE_FUNCTION(Y);
+            CASE_PARSE_FUNCTION(Z);
+            CASE_PARSE_FUNCTION(F);
+            CASE_PARSE_FUNCTION(E);
+            CASE_PARSE_FUNCTION(S);
+            CASE_PARSE_FUNCTION(R);
+        default:
+            return -1;
+            break;
+        }
+
+        parameter = strtok(NULL, " ");
     }
 
-    char *letterInCommand = strstr(command, letter);
-    if (letterInCommand == nullptr)
-        return 1;
-
-    if (!isdigit(*(letterInCommand + 1)) && !isdigit(*(letterInCommand + 2)))
-        return 2;
-
-    if (result != nullptr)
-        *result = atoi(letterInCommand + 1);
-    return 0;
-}
-
-short parseCommandWithLong(const char *command, const char *letter, long *result)
-{
-    if (letter == nullptr)
-    {
-        addError(ERROR_INPUT, "parseCommandWithLong | Wrong input (%p, %p, %p)", command, letter, result);
+    if (NCommand(params) == -1)
         return -1;
-    }
 
-    char *letterInCommand = strstr(command, letter);
-    if (letterInCommand == nullptr)
-        return 1; // No such letter
+    if (MCommand(params) == -1)
+        return -1;
 
-    if (!isdigit(*(letterInCommand + 1)) && !isdigit(*(letterInCommand + 2)))
-        return 2; // Is letter but without number
+    if (GCommand(params) == -1)
+        return -1;
 
-    if (result != nullptr)
-        *result = atol(letterInCommand + 1);
+    if (TCommand(params) == -1)
+        return -1;
+
     return 0;
 }
 
@@ -100,10 +98,17 @@ short parseCommandWithFloat(const char *command, const char *letter, float *resu
     return 0;
 }
 
+void deleteComments(const char *command)
+{
+    char *comment = strstr(command, ";");
+    if (comment != nullptr)
+        *comment = '\0';
+}
+
 short parseCheckSum(const char *command)
 {
-    int checkSum = 0;
-    short result = parseCommandWithInt(command, "*", &checkSum);
+    float checkSum = 0;
+    short result = parseCommandWithFloat(command, "*", &checkSum);
     if (result == -1 || result == 2)
         return -1;
     else if (result == 0)
@@ -132,148 +137,32 @@ unsigned char calculateChecksum(const char *command)
     return checksum;
 }
 
-short parseGCommand(const char *command)
-{
-    int gNumber = 0;
-    short result = parseCommandWithInt(command, "G", &gNumber);
-    if (result == -1 || result == 2)
-        return -1;
-    else if (result == 0)
-    {
-        return GCommand(gNumber);
-    }
-    return 0;
-}
-
-short GCommand(int number)
-{
-    switch (number)
-    {
-    case 0:
-        // Move fast
-        break;
-    case 1:
-        // Move with framefate
-        break;
-    case 28:
-        printer.isWaitFunction = 1;
-        printer.waitFuntion = homing;
-        break;
-    case 92:
-        setStartPosition();
-        break;
-    default:
-        return -1;
-        break;
-    }
-    return 0;
-}
-
-short parseMCommand(const char *command)
-{
-    int mNumber = 0;
-    short result = parseCommandWithInt(command, "M", &mNumber);
-    if (result == -1 || result == 2)
-        return -1;
-    else if (result == 0)
-        return MCommand(mNumber);
-    return 0;
-}
-
-short MCommand(int number)
-{
-    switch (number)
-    {
-    case 17:
-        XMotor.enableOutputs();
-        YMotor.enableOutputs();
-        ZMotor.enableOutputs();
-        EMotor.enableOutputs();
-        break;
-    case 82:
-    case 83:
-        // Relative, Absolute codes (ignore)
-        break;
-    case 18:
-    case 84:
-        // TODO param
-        XMotor.disableOutputs();
-        YMotor.disableOutputs();
-        ZMotor.disableOutputs();
-        EMotor.disableOutputs();
-        break;
-    case 104:
-        // TODO: hotend fun
-        break;
-    case 105:
-        if (addMessage("T0:200.0/200.0 T1:100.0/100.0") == -1) // TODO: Temp message
-            return -1;
-        break;
-    case 107:
-        // TODO: fan off
-        break;
-    case 109:
-        // TODO: hotend fun
-        break;
-    case 110:
-        parserState.mState |= M110;
-        parserState.lastNumberLine = -1;
-        break;
-    case 140:
-        // TODO: hot bed fun
-        break;
-    default:
-        return -1;
-        break;
-    }
-
-    return 0;
-}
-
-short parseNCommand(const char *command)
-{
-    long nLine = 0;
-    short result = parseCommandWithLong(command, "N", &nLine);
-    if (result == -1 || result == 2)
-        return -1;
-    else if (result == 0)
-        return NCommand(nLine);
-
-    return 0;
-}
-
-short NCommand(long number)
+short NCommand(float *params)
 {
     if (parserState.mState & M110)
     {
-        if (parserState.lastNumberLine != -1 && number != parserState.lastNumberLine + 1)
+        if (parserState.lastNumberLine != -1 && (int)params[N] != parserState.lastNumberLine + 1)
         {
-            addError(ERROR_NLINE, "NCommand | Wrong line number: %d, last line number %d", number, parserState.lastNumberLine);
+            addError(ERROR_NLINE, "NCommand | Wrong line number: %d, last line number %d", (int)params[N], parserState.lastNumberLine);
             return -1;
         }
-        parserState.lastNumberLine = number;
+        parserState.lastNumberLine = (int)params[N];
     }
 
     return 0;
 }
 
-short parseTCommand(const char *command)
+short TCommand(float *params)
 {
-    int tTool = 0;
-    short result = parseCommandWithInt(command, "T", &tTool);
-    if (result == -1 || result == 2)
-        return -1;
-    else if (result == 0)
-        return TCommand(tTool);
+    for (size_t i = G; i < PARAM_COUNT; ++i)
+        if (i == T || i == N)
+            continue;
+        else if (params[i] != NAN)
+            return 0;
 
-    return 0;
-}
-
-short TCommand(int number)
-{
-    if (number != 0)
+    if ((int)params[T] != T0)
     {
-        addError(ERROR_TOOL, "TCommand | Wrong tool: %d", number);
+        addError(ERROR_TOOL, "TCommand | Wrong tool: %d", (int)params[T]);
         return -1;
     }
 
