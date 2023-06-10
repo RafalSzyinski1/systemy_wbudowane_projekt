@@ -157,7 +157,7 @@ short TCommand(float *params)
     for (size_t i = G; i < PARAM_COUNT; ++i)
         if (i == T || i == N)
             continue;
-        else if (params[i] != NAN)
+        else if (!isnanf(params[i]))
             return 0;
 
     if ((int)params[T] != T0)

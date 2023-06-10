@@ -4,7 +4,7 @@
 
 short GCommand(float *params)
 {
-    if (params[G] == NAN)
+    if (isnanf(params[G]))
         return 0;
 
     switch ((int)params[G])

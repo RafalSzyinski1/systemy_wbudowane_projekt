@@ -5,18 +5,18 @@
 
 void M17(float *params)
 {
-    if (params[X] != NAN)
+    if (!isnanf(params[X]))
         XMotor.enableOutputs();
-    if (params[Y] != NAN)
+    if (!isnanf(params[Y]))
         YMotor.enableOutputs();
-    if (params[Z] != NAN)
+    if (!isnanf(params[Z]))
         ZMotor.enableOutputs();
-    if (params[E] != NAN)
+    if (!isnanf(params[E]))
         EMotor.enableOutputs();
-    if (params[X] == NAN &&
-        params[Y] == NAN &&
-        params[Z] == NAN &&
-        params[E] == NAN)
+    if (isnanf(params[X]) &&
+        isnanf(params[Y]) &&
+        isnanf(params[Z]) &&
+        isnanf(params[E]))
     {
         XMotor.enableOutputs();
         YMotor.enableOutputs();
@@ -27,18 +27,18 @@ void M17(float *params)
 
 void M84(float *params)
 {
-    if (params[X] != NAN)
+    if (!isnanf(params[X]))
         XMotor.disableOutputs();
-    if (params[Y] != NAN)
+    if (!isnanf(params[Y]))
         YMotor.disableOutputs();
-    if (params[Z] != NAN)
+    if (!isnanf(params[Z]))
         ZMotor.disableOutputs();
-    if (params[E] != NAN)
+    if (!isnanf(params[E]))
         EMotor.disableOutputs();
-    if (params[X] == NAN &&
-        params[Y] == NAN &&
-        params[Z] == NAN &&
-        params[E] == NAN)
+    if (isnanf(params[X]) &&
+        isnanf(params[Y]) &&
+        isnanf(params[Z]) &&
+        isnanf(params[E]))
     {
         XMotor.disableOutputs();
         YMotor.disableOutputs();
@@ -49,7 +49,7 @@ void M84(float *params)
 
 short MCommand(float *params)
 {
-    if (params[M] == NAN)
+    if (isnanf(params[M]))
         return 0;
 
     switch ((int)params[M])
