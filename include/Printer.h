@@ -28,6 +28,6 @@ struct PrinterState
 };
 
 short homing();
-short setStartPosition();
+void Printerloop();
 
 #endif // PRINTER_H_

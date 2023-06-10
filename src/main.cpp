@@ -18,10 +18,7 @@ void setup()
 
 void loop()
 {
-	XendStop.loop();
-	YendStop.loop();
-	ZendStop.loop();
-
+	Printerloop();
 	if (printer.isWaitFunction)
 	{
 		printer.waitFuntion();
