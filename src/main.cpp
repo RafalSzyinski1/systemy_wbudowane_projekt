@@ -4,8 +4,11 @@
 #include "Init.h"
 #include "Global.h"
 #include "Parser.h"
+#include "Configure.h"
 
-String data = "";
+char data[MAX_DATA_SIZE] = "\0";
+size_t data_index = 0;
+char receivedChar = '\0';
 
 void setup()
 {
@@ -27,12 +30,17 @@ void loop()
 	{
 		if (Serial.available())
 		{
-			data = Serial.readStringUntil('\n');
-			data.trim();
+			receivedChar = Serial.read();
+
+			if (data_index > MAX_DATA_SIZE)
+				addError(ERROR_OVERLOAD_DATA_SIZE, "main | data to big");
+			else
+				data[data_index++] = receivedChar;
 		}
-		if (data != "")
+		if (receivedChar == '\n')
 		{
-			short result = parseGCodeCommand(data.c_str());
+			data[data_index] = '\0';
+			short result = parseGCodeCommand(data);
 			if (result == 0)
 			{
 				Serial.print("ok");
@@ -41,7 +49,7 @@ void loop()
 					Serial.print(' ');
 					Serial.print(messages.messages[i]);
 				}
-				messages.numOfMessages = 0;
+				restartMessage();
 			}
 			else
 			{
@@ -52,10 +60,11 @@ void loop()
 				Serial.println(error.errorCode);
 				Serial.println(error.errorMessage);
 
-				error.errorCode = NONE;
-				error.errorMessage[0] = '\0';
+				restartError();
 			}
+			data[0] = '\0';
+			receivedChar = '\0';
+			data_index = 0;
 		}
-		data = "";
 	}
 }

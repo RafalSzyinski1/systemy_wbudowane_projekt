@@ -3,6 +3,7 @@
 
 // Serial Port
 #define BAUDRATE 115200
+#define MAX_DATA_SIZE 64
 
 // Printer
 #define WIDTH 800

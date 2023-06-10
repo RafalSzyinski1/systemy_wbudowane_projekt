@@ -7,6 +7,7 @@ enum ErrorCode
 {
     NONE,
     ERROR_CHECKSUM,
+    ERROR_OVERLOAD_DATA_SIZE,
     ERROR_INPUT,
     ERROR_NLINE,
     ERROR_TOOL,

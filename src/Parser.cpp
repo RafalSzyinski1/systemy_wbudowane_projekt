@@ -6,6 +6,7 @@
 #include "Printer.h"
 #include "GCommand.h"
 #include "MCommand.h"
+#include "Configure.h"
 
 #define CASE_PARSE_FUNCTION(ParamType)                                \
     case #ParamType[0]:                                               \
@@ -37,7 +38,8 @@ short parseGCodeCommand(const char *command)
         params[i] = NAN;
     float number = 0.0;
     short result = 0;
-    char *commandCopy = strdup(command);
+    char commandCopy[MAX_DATA_SIZE];
+    strncpy(commandCopy, command, MAX_DATA_SIZE);
     char *parameter = strtok(commandCopy, " ");
 
     while (parameter != nullptr)
