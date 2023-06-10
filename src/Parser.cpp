@@ -139,6 +139,9 @@ unsigned char calculateChecksum(const char *command)
 
 short NCommand(float *params)
 {
+    if (isnanf(params[N]))
+        return 0;
+
     if (parserState.mState & M110)
     {
         if (parserState.lastNumberLine != -1 && (int)params[N] != parserState.lastNumberLine + 1)

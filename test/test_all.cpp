@@ -292,6 +292,20 @@ void test_NCommand()
     params[N] = 3;
     TEST_ASSERT_EQUAL(0, NCommand(params));
     TEST_ASSERT_EQUAL(3, parserState.lastNumberLine);
+
+    params[N] = NAN;
+    params[M] = 105;
+    TEST_ASSERT_EQUAL(0, NCommand(params));
+    params[G] = 1;
+    params[M] = NAN;
+    TEST_ASSERT_EQUAL(0, NCommand(params));
+
+    params[N] = 4;
+    TEST_ASSERT_EQUAL(0, NCommand(params));
+    params[N] = 5;
+    TEST_ASSERT_EQUAL(0, NCommand(params));
+    params[G] = 0;
+
     params[N] = 0;
     TEST_ASSERT_EQUAL(-1, NCommand(params));
     TEST_ASSERT_EQUAL(ERROR_NLINE, error.errorCode);
@@ -320,6 +334,7 @@ void test_NCommand()
     params[N] = 0;
     TEST_ASSERT_EQUAL(-1, NCommand(params));
     TEST_ASSERT_EQUAL(ERROR_NLINE, error.errorCode);
+    error.errorCode = NONE;
 }
 
 void test_TCommand()
