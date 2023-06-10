@@ -20,11 +20,23 @@ short GCommand(float *params)
         printer.waitFuntion = homing;
         break;
     case 92:
-        setStartPosition();
+        G92(params);
         break;
     default:
         return -1;
         break;
     }
     return 0;
+}
+
+void G92(float *params)
+{
+    if (!isnanf(params[X]))
+        XMotor.setCurrentPosition(params[X]);
+    if (!isnanf(params[Y]))
+        YMotor.setCurrentPosition(params[Y]);
+    if (!isnanf(params[Z]))
+        ZMotor.setCurrentPosition(params[Z]);
+    if (!isnanf(params[E]))
+        EMotor.setCurrentPosition(params[E]);
 }
