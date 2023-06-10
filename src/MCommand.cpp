@@ -2,6 +2,7 @@
 
 #include "MCommand.h"
 #include "Global.h"
+#include "Configure.h"
 
 short MCommand(float *params)
 {
@@ -43,7 +44,7 @@ short MCommand(float *params)
         parserState.lastNumberLine = -1;
         break;
     case 114:
-
+        M114(params);
         break;
     case 140:
         // TODO: hot bed fun
@@ -103,19 +104,11 @@ void M84(float *params)
 void M114(float *params)
 {
     if (!isnanf(params[E]))
-    {
-        Serial.print("E");
-        Serial.println(EMotor.currentPosition());
-    }
+        addMessage("E%ld", (long)(EMotor.currentPosition() / E_STEPS_PER_MM));
     else
-    {
-        Serial.print("X");
-        Serial.print(XMotor.currentPosition());
-        Serial.print("Y");
-        Serial.print(YMotor.currentPosition());
-        Serial.print("Z");
-        Serial.print(ZMotor.currentPosition());
-        Serial.print("E");
-        Serial.println(EMotor.currentPosition());
-    }
+        addMessage("X%ld Y%ld Z%ld E%ld",
+                   (long)(XMotor.currentPosition() / X_STEPS_PER_MM),
+                   (long)(YMotor.currentPosition() / Y_STEPS_PER_MM),
+                   (long)(ZMotor.currentPosition() / Z_STEPS_PER_MM),
+                   (long)(EMotor.currentPosition() / E_STEPS_PER_MM));
 }

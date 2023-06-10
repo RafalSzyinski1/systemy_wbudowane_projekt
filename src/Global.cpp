@@ -17,7 +17,7 @@ ezButton ZendStop = ezButton(Z_MAX_PIN);
 ToolState tools[NUM_OF_TOOLS];
 
 // Printer
-PrinterState printer = {TNone, 0, 0, 0, nullptr};
+PrinterState printer = {TNone, 0, 0, 0};
 
 // Parser
 ParserState parserState = {MNone, -1};

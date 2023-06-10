@@ -171,5 +171,7 @@ short TCommand(float *params)
         return -1;
     }
 
+    printer.toolSelected = (ToolCode)params[T];
+
     return 0;
 }

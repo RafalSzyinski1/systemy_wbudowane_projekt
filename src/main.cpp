@@ -19,46 +19,43 @@ void setup()
 void loop()
 {
 	Printerloop();
-	if (printer.isWaitFunction)
+	if (!printer.wait && Serial.available())
 	{
-		printer.waitFuntion();
+		receivedChar = Serial.read();
+
+		if (data_index > MAX_DATA_SIZE)
+			addError(ERROR_OVERLOAD_DATA_SIZE, "main | data to big");
+		else
+			data[data_index++] = receivedChar;
 	}
-	else
+	if (receivedChar == '\n')
 	{
-		if (Serial.available())
+		data[data_index] = '\0';
+		short result = parseGCodeCommand(data);
+		if (!printer.wait && result == 0)
 		{
-			receivedChar = Serial.read();
-
-			if (data_index > MAX_DATA_SIZE)
-				addError(ERROR_OVERLOAD_DATA_SIZE, "main | data to big");
-			else
-				data[data_index++] = receivedChar;
+			Serial.print("ok");
+			for (size_t i = 0; i < messages.numOfMessages; ++i)
+			{
+				Serial.print(' ');
+				Serial.print(messages.messages[i]);
+			}
+			Serial.println();
+			restartMessage();
 		}
-		if (receivedChar == '\n')
+		else if (result == -1 || error.errorCode != NONE)
 		{
-			data[data_index] = '\0';
-			short result = parseGCodeCommand(data);
-			if (result == 0)
-			{
-				Serial.print("ok");
-				for (size_t i = 0; i < messages.numOfMessages; ++i)
-				{
-					Serial.print(' ');
-					Serial.print(messages.messages[i]);
-				}
-				restartMessage();
-			}
-			else
-			{
-				Serial.println("M108");
-				Serial.print("ERROR with command: ");
-				Serial.println(data);
-				Serial.print("ERROR CODE: ");
-				Serial.println(error.errorCode);
-				Serial.println(error.errorMessage);
+			Serial.println("M108");
+			Serial.print("ERROR with command: ");
+			Serial.println(data);
+			Serial.print("ERROR CODE: ");
+			Serial.println(error.errorCode);
+			Serial.println(error.errorMessage);
 
-				restartError();
-			}
+			restartError();
+		}
+		if (!printer.wait)
+		{
 			data[0] = '\0';
 			receivedChar = '\0';
 			data_index = 0;

@@ -15,19 +15,15 @@ struct ToolState
     unsigned int hotendTemp; // TODO; temp var (replace getTemp);
 };
 
-typedef short (*WaitFuntion)();
-
 struct PrinterState
 {
     ToolCode toolSelected;
     unsigned int feedrate;
     unsigned int fanspeed;
 
-    short isWaitFunction;
-    WaitFuntion waitFuntion;
+    short wait;
 };
 
-short homing();
 void Printerloop();
 
 #endif // PRINTER_H_
