@@ -17,10 +17,10 @@ ezButton ZendStop = ezButton(Z_MAX_PIN);
 ToolState tools[NUM_OF_TOOLS];
 
 // Printer
-PrinterState printer = {TNone, 0, 0, 0};
+PrinterState printer = {TNone, 1000, 0, 0};
 
 // Parser
-ParserState parserState = {MNone, -1};
+ParserState parserState = {MNone, GNone, -1};
 
 // Message
 Message messages = {0, {"\0", "\0"}};

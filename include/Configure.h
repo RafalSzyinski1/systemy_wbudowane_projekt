@@ -3,28 +3,27 @@
 
 // Serial Port
 #define BAUDRATE 115200
-#define MAX_DATA_SIZE 64
 
 // Printer
-#define WIDTH 800
-#define DEPTH 800
-#define HEIGHT 800
+#define WIDTH 200
+#define DEPTH 200
+#define HEIGHT 200
 
 // Stepper
 #define X_MAX_SPEED 500.0
-#define X_ACCELERATION 100.0
+#define X_ACCELERATION 3000.0
 #define X_STEPS_PER_MM 284.44
 
 #define Y_MAX_SPEED 500.0
-#define Y_ACCELERATION 100.0
+#define Y_ACCELERATION 3000.0
 #define Y_STEPS_PER_MM 284.44
 
 #define Z_MAX_SPEED 500.0
-#define Z_ACCELERATION 100.0
+#define Z_ACCELERATION 3000.0
 #define Z_STEPS_PER_MM 284.44
 
 #define E_MAX_SPEED 500.0
-#define E_ACCELERATION 100.0
+#define E_ACCELERATION 3000.0
 #define E_STEPS_PER_MM 284.44
 
 // Tools

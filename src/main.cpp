@@ -6,9 +6,7 @@
 #include "Parser.h"
 #include "Configure.h"
 
-char data[MAX_DATA_SIZE] = "\0";
-size_t data_index = 0;
-char receivedChar = '\0';
+String data = "";
 
 void setup()
 {
@@ -21,17 +19,11 @@ void loop()
 	Printerloop();
 	if (!printer.wait && Serial.available())
 	{
-		receivedChar = Serial.read();
-
-		if (data_index > MAX_DATA_SIZE)
-			addError(ERROR_OVERLOAD_DATA_SIZE, "main | data to big");
-		else
-			data[data_index++] = receivedChar;
+		data = Serial.readStringUntil('\n');
 	}
-	if (receivedChar == '\n')
+	if (data != "")
 	{
-		data[data_index] = '\0';
-		short result = parseGCodeCommand(data);
+		short result = parseGCodeCommand(data.c_str());
 		if (!printer.wait && result == 0)
 		{
 			Serial.print("ok");
@@ -56,9 +48,7 @@ void loop()
 		}
 		if (!printer.wait)
 		{
-			data[0] = '\0';
-			receivedChar = '\0';
-			data_index = 0;
+			data = "";
 		}
 	}
 }

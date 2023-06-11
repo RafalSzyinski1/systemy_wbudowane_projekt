@@ -16,10 +16,8 @@ short MCommand(float *params)
         break;
     case 82:
         parserState.mState |= M82;
-        parserState.mState &= ~M83;
         break;
     case 83:
-        parserState.mState |= M83;
         parserState.mState &= ~M82;
         break;
     case 18:
@@ -103,12 +101,13 @@ void M84(float *params)
 
 void M114(float *params)
 {
+    // Waring: float don't work on arduino
     if (!isnanf(params[E]))
-        addMessage("E%ld", (long)(EMotor.currentPosition() / E_STEPS_PER_MM));
+        addMessage("E%ld", (int)(EMotor.currentPosition() / E_STEPS_PER_MM));
     else
         addMessage("X%ld Y%ld Z%ld E%ld",
-                   (long)(XMotor.currentPosition() / X_STEPS_PER_MM),
-                   (long)(YMotor.currentPosition() / Y_STEPS_PER_MM),
-                   (long)(ZMotor.currentPosition() / Z_STEPS_PER_MM),
-                   (long)(EMotor.currentPosition() / E_STEPS_PER_MM));
+                   (int)(XMotor.currentPosition() / X_STEPS_PER_MM),
+                   (int)(YMotor.currentPosition() / Y_STEPS_PER_MM),
+                   (int)(ZMotor.currentPosition() / Z_STEPS_PER_MM),
+                   (int)(EMotor.currentPosition() / E_STEPS_PER_MM));
 }

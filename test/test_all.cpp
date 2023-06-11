@@ -371,8 +371,8 @@ int main(int argc, char **argv)
 {
     UNITY_BEGIN();
     // run_error_test();
-    // run_message_test();
-    run_parser_test();
+    run_message_test();
+    // run_parser_test();
     UNITY_END();
     return 0;
 }

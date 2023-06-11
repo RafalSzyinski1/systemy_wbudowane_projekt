@@ -3,6 +3,7 @@
 
 short GCommand(float *params);
 
+void G0(float *params);
 void G28(float *params);
 void G92(float *params);
 

@@ -38,8 +38,7 @@ short parseGCodeCommand(const char *command)
         params[i] = NAN;
     float number = 0.0;
     short result = 0;
-    char commandCopy[MAX_DATA_SIZE];
-    strncpy(commandCopy, command, MAX_DATA_SIZE);
+    char *commandCopy = strdup(command);
     char *parameter = strtok(commandCopy, " ");
 
     while (parameter != nullptr)
@@ -64,6 +63,8 @@ short parseGCodeCommand(const char *command)
 
         parameter = strtok(NULL, " ");
     }
+
+    free(commandCopy);
 
     if (NCommand(params) == -1)
         return -1;

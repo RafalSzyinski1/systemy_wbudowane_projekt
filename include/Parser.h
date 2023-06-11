@@ -5,13 +5,19 @@ enum MState
 {
     MNone = 0,
     M82 = 1 << 0,
-    M83 = 1 << 1,
-    M110 = 1 << 2,
+    M110 = 1 << 1,
+};
+
+enum GState
+{
+    GNone = 0,
+    G91 = 1 << 0,
 };
 
 struct ParserState
 {
     unsigned int mState;
+    unsigned int gState;
     int lastNumberLine;
 };
 

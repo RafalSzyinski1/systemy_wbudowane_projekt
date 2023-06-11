@@ -16,18 +16,22 @@ void setupStepperMotors()
     XMotor.setMaxSpeed(X_MAX_SPEED);
     XMotor.setAcceleration(X_ACCELERATION);
     XMotor.setEnablePin(ENABLE_PIN);
+    XMotor.setPinsInverted(0, 0, 1);
 
     YMotor.setMaxSpeed(Y_MAX_SPEED);
     YMotor.setAcceleration(Y_ACCELERATION);
     YMotor.setEnablePin(ENABLE_PIN);
+    YMotor.setPinsInverted(0, 0, 1);
 
     ZMotor.setMaxSpeed(Z_MAX_SPEED);
     ZMotor.setAcceleration(Z_ACCELERATION);
     ZMotor.setEnablePin(ENABLE_PIN);
+    ZMotor.setPinsInverted(0, 0, 1);
 
     EMotor.setMaxSpeed(E_MAX_SPEED);
     EMotor.setAcceleration(E_ACCELERATION);
     EMotor.setEnablePin(ENABLE_PIN);
+    EMotor.setPinsInverted(0, 0, 1);
 
     Steppers.addStepper(XMotor);
     Steppers.addStepper(YMotor);

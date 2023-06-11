@@ -11,14 +11,18 @@ short GCommand(float *params)
     switch ((int)params[G])
     {
     case 0:
-        // Move fast
-        break;
     case 1:
-        // Move with framefate
+        if (!printer.wait)
+            G0(params);
         break;
     case 28:
-        printer.wait = 1;
         G28(params);
+        break;
+    case 90:
+        parserState.gState &= ~G91;
+        break;
+    case 91:
+        parserState.gState |= G91;
         break;
     case 92:
         G92(params);
@@ -30,8 +34,83 @@ short GCommand(float *params)
     return 0;
 }
 
+void G0(float *params)
+{
+    if (!isnanf(params[F]))
+        printer.feedrate = (int)params[F];
+
+    if (parserState.gState & G91)
+    {
+        if (!isnanf(params[X]))
+        {
+            XMotor.setSpeed(printer.feedrate * X_STEPS_PER_MM);
+            XMotor.move(params[X] * X_STEPS_PER_MM);
+            printer.wait = 1;
+        }
+
+        if (!isnanf(params[Y]))
+        {
+            YMotor.setSpeed(printer.feedrate * Y_STEPS_PER_MM);
+            YMotor.move(params[Y] * Y_STEPS_PER_MM);
+            printer.wait = 1;
+        }
+
+        if (!isnanf(params[Z]))
+        {
+            ZMotor.setSpeed(printer.feedrate * Z_STEPS_PER_MM);
+            ZMotor.move(params[Z] * Z_STEPS_PER_MM);
+            printer.wait = 1;
+        }
+
+        if (!isnanf(params[E]))
+        {
+            printer.wait = 1;
+            EMotor.setSpeed(printer.feedrate * E_STEPS_PER_MM);
+
+            if (!(parserState.mState & M82))
+                EMotor.move(params[E] * E_STEPS_PER_MM);
+            else
+                EMotor.moveTo(params[E] * E_STEPS_PER_MM);
+        }
+    }
+    else
+    {
+        long absolute[4] = {0, 0, 0, 0};
+        if (!isnanf(params[X]))
+        {
+            XMotor.setSpeed(printer.feedrate * X_STEPS_PER_MM);
+            absolute[0] = params[X] * X_STEPS_PER_MM;
+            printer.wait = 1;
+        }
+        if (!isnanf(params[Y]))
+        {
+            YMotor.setSpeed(printer.feedrate * Y_STEPS_PER_MM);
+            absolute[1] = params[Y] * Y_STEPS_PER_MM;
+            printer.wait = 1;
+        }
+        if (!isnanf(params[Z]))
+        {
+            ZMotor.setSpeed(printer.feedrate * Z_STEPS_PER_MM);
+            absolute[2] = params[Z] * Z_STEPS_PER_MM;
+            printer.wait = 1;
+        }
+        if (!isnanf(params[E]))
+        {
+            EMotor.setSpeed(printer.feedrate * E_STEPS_PER_MM);
+            printer.wait = 1;
+            if (!(parserState.mState & M82))
+                EMotor.move(params[E] * E_STEPS_PER_MM);
+            else
+                absolute[3] = params[E] * X_STEPS_PER_MM;
+        }
+        Steppers.moveTo(absolute);
+    }
+}
+
 void G28(float *params)
 {
+    printer.wait = 1;
+
     short allnan = 0;
     short isfinish = 1;
     if (isnan(params[X]) && isnan(params[Y]) && isnan(params[Z]))
