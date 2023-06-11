@@ -5,26 +5,26 @@
 #define BAUDRATE 115200
 
 // Printer
-#define WIDTH 200
-#define DEPTH 200
-#define HEIGHT 200
+#define WIDTH 100
+#define DEPTH 100
+#define HEIGHT 100
 
 // Stepper
 #define X_MAX_SPEED 500.0
 #define X_ACCELERATION 3000.0
-#define X_STEPS_PER_MM 284.44
+#define X_STEPS_PER_MM 64
 
 #define Y_MAX_SPEED 500.0
 #define Y_ACCELERATION 3000.0
-#define Y_STEPS_PER_MM 284.44
+#define Y_STEPS_PER_MM 64
 
 #define Z_MAX_SPEED 500.0
 #define Z_ACCELERATION 3000.0
-#define Z_STEPS_PER_MM 284.44
+#define Z_STEPS_PER_MM 64
 
 #define E_MAX_SPEED 500.0
 #define E_ACCELERATION 3000.0
-#define E_STEPS_PER_MM 284.44
+#define E_STEPS_PER_MM 64
 
 // Tools
 #define NUM_OF_TOOLS 1
