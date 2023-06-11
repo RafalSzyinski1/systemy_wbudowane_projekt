@@ -12,8 +12,7 @@ short GCommand(float *params)
     {
     case 0:
     case 1:
-        if (!printer.wait)
-            G0(params);
+        G0(params);
         break;
     case 28:
         G28(params);
@@ -42,124 +41,107 @@ void G0(float *params)
     if (parserState.gState & G91)
     {
         if (!isnanf(params[X]))
-        {
-            XMotor.setSpeed(printer.feedrate * X_STEPS_PER_MM);
             XMotor.move(params[X] * X_STEPS_PER_MM);
-            printer.wait = 1;
-        }
 
         if (!isnanf(params[Y]))
-        {
-            YMotor.setSpeed(printer.feedrate * Y_STEPS_PER_MM);
             YMotor.move(params[Y] * Y_STEPS_PER_MM);
-            printer.wait = 1;
-        }
 
         if (!isnanf(params[Z]))
-        {
-            ZMotor.setSpeed(printer.feedrate * Z_STEPS_PER_MM);
             ZMotor.move(params[Z] * Z_STEPS_PER_MM);
-            printer.wait = 1;
-        }
 
         if (!isnanf(params[E]))
         {
-            printer.wait = 1;
-            EMotor.setSpeed(printer.feedrate * E_STEPS_PER_MM);
-
             if (!(parserState.mState & M82))
                 EMotor.move(params[E] * E_STEPS_PER_MM);
             else
                 EMotor.moveTo(params[E] * E_STEPS_PER_MM);
+        }
+
+        while (XMotor.distanceToGo() != 0 ||
+               YMotor.distanceToGo() != 0 ||
+               ZMotor.distanceToGo() != 0 ||
+               EMotor.distanceToGo() != 0)
+        {
+            XMotor.run();
+            YMotor.run();
+            ZMotor.run();
+            EMotor.run();
         }
     }
     else
     {
         long absolute[4] = {0, 0, 0, 0};
         if (!isnanf(params[X]))
-        {
-            XMotor.setSpeed(printer.feedrate * X_STEPS_PER_MM);
             absolute[0] = params[X] * X_STEPS_PER_MM;
-            printer.wait = 1;
-        }
+
         if (!isnanf(params[Y]))
-        {
-            YMotor.setSpeed(printer.feedrate * Y_STEPS_PER_MM);
             absolute[1] = params[Y] * Y_STEPS_PER_MM;
-            printer.wait = 1;
-        }
+
         if (!isnanf(params[Z]))
-        {
-            ZMotor.setSpeed(printer.feedrate * Z_STEPS_PER_MM);
             absolute[2] = params[Z] * Z_STEPS_PER_MM;
-            printer.wait = 1;
-        }
+
         if (!isnanf(params[E]))
         {
-            EMotor.setSpeed(printer.feedrate * E_STEPS_PER_MM);
-            printer.wait = 1;
             if (!(parserState.mState & M82))
+            {
                 EMotor.move(params[E] * E_STEPS_PER_MM);
+                absolute[3] = EMotor.targetPosition();
+            }
             else
-                absolute[3] = params[E] * X_STEPS_PER_MM;
+                absolute[3] = params[E] * E_STEPS_PER_MM;
         }
         Steppers.moveTo(absolute);
+
+        while (XMotor.distanceToGo() != 0 ||
+               YMotor.distanceToGo() != 0 ||
+               ZMotor.distanceToGo() != 0 ||
+               EMotor.distanceToGo() != 0)
+            Steppers.run();
     }
 }
 
 void G28(float *params)
 {
-    printer.wait = 1;
-
     short allnan = 0;
-    short isfinish = 1;
     if (isnan(params[X]) && isnan(params[Y]) && isnan(params[Z]))
         allnan = 1;
 
     if (allnan || !isnan(params[X]))
     {
-        if (XendStop.getState() == LOW)
+        XMotor.setSpeed(X_MAX_SPEED);
+        while (!XendStop.isPressed())
         {
+            XendStop.loop();
             XMotor.runSpeed();
-            isfinish = 0;
         }
-        else
-        {
-            XMotor.stop();
-            XMotor.setCurrentPosition((WIDTH / 2.0) * X_STEPS_PER_MM);
-        }
+
+        XMotor.stop();
+        XMotor.setCurrentPosition(0);
     }
 
     if (allnan || !isnan(params[Y]))
     {
-        if (YendStop.getState() == LOW)
+        YMotor.setSpeed(Y_MAX_SPEED);
+        while (!YendStop.isPressed())
         {
+            YendStop.loop();
             YMotor.runSpeed();
-            isfinish = 0;
         }
-        else
-        {
-            YMotor.stop();
-            YMotor.setCurrentPosition((DEPTH / 2.0) * Y_STEPS_PER_MM);
-        }
+        YMotor.stop();
+        YMotor.setCurrentPosition(0);
     }
 
     if (allnan || !isnan(params[Z]))
     {
-        if (ZendStop.getState() == LOW)
+        ZMotor.setSpeed(Z_MAX_SPEED);
+        while (!ZendStop.isPressed())
         {
+            ZendStop.loop();
             ZMotor.runSpeed();
-            isfinish = 0;
         }
-        else
-        {
-            ZMotor.stop();
-            ZMotor.setCurrentPosition(HEIGHT * Z_STEPS_PER_MM);
-        }
+        ZMotor.stop();
+        ZMotor.setCurrentPosition(0);
     }
-
-    if (isfinish)
-        printer.wait = 0;
 }
 
 void G92(float *params)

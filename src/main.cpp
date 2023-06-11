@@ -17,14 +17,14 @@ void setup()
 void loop()
 {
 	Printerloop();
-	if (!printer.wait && Serial.available())
+	if (Serial.available())
 	{
 		data = Serial.readStringUntil('\n');
 	}
 	if (data != "")
 	{
 		short result = parseGCodeCommand(data.c_str());
-		if (!printer.wait && result == 0)
+		if (result == 0)
 		{
 			Serial.print("ok");
 			for (size_t i = 0; i < messages.numOfMessages; ++i)
@@ -46,9 +46,7 @@ void loop()
 
 			restartError();
 		}
-		if (!printer.wait)
-		{
-			data = "";
-		}
+
+		data = "";
 	}
 }
