@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <math.h>
 
 #include "MCommand.h"
 #include "Global.h"
@@ -30,6 +31,9 @@ short MCommand(float *params)
     case 105:
         if (addMessage("T0:200.0/200.0 T1:100.0/100.0") == -1) // TODO: Temp message
             return -1;
+        break;
+    case 106:
+        // TODO: fan speed
         break;
     case 107:
         // TODO: fan off
@@ -103,11 +107,11 @@ void M114(float *params)
 {
     // Waring: float don't work on arduino
     if (!isnanf(params[E]))
-        addMessage("E%ld", (int)(EMotor.currentPosition() / E_STEPS_PER_MM));
+        addMessage("E%d", (int)ceilf(EMotor.currentPosition() / E_STEPS_PER_MM));
     else
-        addMessage("X%ld Y%ld Z%ld E%ld",
-                   (int)(XMotor.currentPosition() / X_STEPS_PER_MM),
-                   (int)(YMotor.currentPosition() / Y_STEPS_PER_MM),
-                   (int)(ZMotor.currentPosition() / Z_STEPS_PER_MM),
-                   (int)(EMotor.currentPosition() / E_STEPS_PER_MM));
+        addMessage("X%d Y%d Z%d E%d",
+                   (int)ceilf(XMotor.currentPosition() / X_STEPS_PER_MM),
+                   (int)ceilf(YMotor.currentPosition() / Y_STEPS_PER_MM),
+                   (int)ceilf(ZMotor.currentPosition() / Z_STEPS_PER_MM),
+                   (int)ceilf(EMotor.currentPosition() / E_STEPS_PER_MM));
 }
