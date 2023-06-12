@@ -38,39 +38,44 @@ void G0(float *params)
     if (!isnanf(params[F]))
         printer.feedrate = (int)params[F];
 
+    long absolute[4] = {XMotor.currentPosition(),
+                        YMotor.currentPosition(),
+                        ZMotor.currentPosition(),
+                        EMotor.currentPosition()};
+
     if (parserState.gState & G91)
     {
         if (!isnanf(params[X]))
+        {
             XMotor.move(params[X] * X_STEPS_PER_MM);
+            absolute[0] = XMotor.targetPosition();
+        }
 
         if (!isnanf(params[Y]))
+        {
             YMotor.move(params[Y] * Y_STEPS_PER_MM);
+            absolute[1] = YMotor.targetPosition();
+        }
 
         if (!isnanf(params[Z]))
+        {
             ZMotor.move(params[Z] * Z_STEPS_PER_MM);
+            absolute[2] = ZMotor.targetPosition();
+        }
 
         if (!isnanf(params[E]))
         {
             if (!(parserState.mState & M82))
+            {
                 EMotor.move(params[E] * E_STEPS_PER_MM);
+                absolute[3] = EMotor.targetPosition();
+            }
             else
-                EMotor.moveTo(params[E] * E_STEPS_PER_MM);
-        }
-
-        while (XMotor.distanceToGo() != 0 ||
-               YMotor.distanceToGo() != 0 ||
-               ZMotor.distanceToGo() != 0 ||
-               EMotor.distanceToGo() != 0)
-        {
-            XMotor.run();
-            YMotor.run();
-            ZMotor.run();
-            EMotor.run();
+                absolute[3] = params[E] * E_STEPS_PER_MM;
         }
     }
     else
     {
-        long absolute[4] = {0, 0, 0, 0};
         if (!isnanf(params[X]))
             absolute[0] = params[X] * X_STEPS_PER_MM;
 
@@ -90,14 +95,13 @@ void G0(float *params)
             else
                 absolute[3] = params[E] * E_STEPS_PER_MM;
         }
-        Steppers.moveTo(absolute);
-
-        while (XMotor.distanceToGo() != 0 ||
-               YMotor.distanceToGo() != 0 ||
-               ZMotor.distanceToGo() != 0 ||
-               EMotor.distanceToGo() != 0)
-            Steppers.run();
     }
+    Steppers.moveTo(absolute);
+    while (XMotor.distanceToGo() != 0 ||
+           YMotor.distanceToGo() != 0 ||
+           ZMotor.distanceToGo() != 0 ||
+           EMotor.distanceToGo() != 0)
+        Steppers.run();
 }
 
 void G28(float *params)
